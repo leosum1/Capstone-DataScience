@@ -11,11 +11,11 @@ This report explains how we're loading, cleaning, tokenzising, removing profanit
 In order to process the data in R (http://www.r-project.org/), we first needed to load the necessary packages. Then we downloaded the source data from http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. For this project, we only used the English (United States) data even though other language files were available, including German, Finnish, and Russian.
 The English data was derived from three Internet sources: blogs, twitters, and news files. We read in and processed each file separately. 
 To make the data more useful, we removed extraneous information including:
-  Special characters, 
-  Capital letters, 
-  Hyphenatin in prefixes such as un- and in-,
-  Single quotes in contractions like don't,
-  All non-alphabetic characters except periods,
-  Periods other than at the end of sentences, and
-  Extraneous spaces.
+- *Special characters*, 
+- *Capital letters*, 
+- *Hyphenatin in prefixes such as un- and in-*,
+- *Single quotes in contractions like don't*,
+- *All non-alphabetic characters except periods*,
+- *Periods other than at the end of sentences, and*
+- *Extraneous spaces*.
 To aid in subsequent analysis, we then split the lines into sentences.
