@@ -8,7 +8,8 @@ This repository contains the following files/folders:
 
 1. README.md: This readme.
 2. Task1.R: Creates the data objects from cleaned source files.
-3. Task2.R
+3. Task2.R: Exploratory Data Analysis
+3. Task3.R: Modeling
 
 
 This Readme explains how we're loading, cleaning, tokenzising, removing profanity and sampling the data. Next it explains our initial exploratory analysis and our goals for the eventual predictive text application and algorithm. We also explains the major features of the data we have identified and briefly summarizes our plans for creating the prediction algorithm and a Shiny (http://shiny.rstudio.com/) application.
@@ -23,4 +24,4 @@ The English data was derived from three Internet sources: blogs, twitters, and n
 - *Extra spaces*.
 - *Punctuation except dot and single quotes*,
 
-## Modeling - Task2
+## Exploratory Data Analysis and Modeling - Task2/Task3
