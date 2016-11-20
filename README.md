@@ -13,16 +13,14 @@ This repository contains the following files/folders:
 
 This Readme explains how we're loading, cleaning, tokenzising, removing profanity and sampling the data. Next it explains our initial exploratory analysis and our goals for the eventual predictive text application and algorithm. We also explains the major features of the data we have identified and briefly summarizes our plans for creating the prediction algorithm and a Shiny (http://shiny.rstudio.com/) application.
 
-## Loading and cleaning the data - Task1
+## Loading and cleaning the data - Task0/Task1
 In order to process the data in R (http://www.r-project.org/), we first needed to load the necessary packages. Then we downloaded the source data from http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. For this project, we only used the English (United States) data even though other language files were available, including German, Finnish, and Russian.
 The English data was derived from three Internet sources: blogs, twitters, and news files. We read in and processed each file separately. To make the data more useful, we removed extraneous information including:
 - *Capital letters*,
 - *Unknown characters*,
 - *Numbers*,
 - *Special characters*, 
-- *Extraneous spaces*.
-- *Hyphenatin in prefixes such as un- and in-*,
-- *Single quotes in contractions like don't*,
-- *All non-alphabetic characters except periods*,
-- *Periods other than at the end of sentences, and*
-To aid in subsequent analysis, we then split the lines into sentences.
+- *Extra spaces*.
+- *Punctuation except dot and single quotes*,
+
+## Modeling - Task2
