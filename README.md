@@ -42,7 +42,6 @@ Task1:
    
    *Punctuation except dot and single quotes*
    
-identifying appropriate tokens such as words, punctuation, and numbers. Writing a function that takes a file as input and returns a tokenized version of it.
 - Profanity: We remove profanity and other words we do not want to predict.
 
 ## Exploratory Data Analysis and Modeling [Task2/Task3]
