@@ -58,3 +58,12 @@ How many unique words do you need in a frequency sorted dictionary to cover 50% 
 How do you evaluate how many of the words come from foreign languages? 
 
 Can you think of a way to increase the coverage -- identifying words that may not be in the corpora or using a smaller number of words in the dictionary to cover the same number of phrases? 
+
+## Rpub
+Does the link lead to an HTML page describing the exploratory analysis of the training data set?
+
+Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
+
+Has the data scientist made basic plots, such as histograms to illustrate features of the data?
+
+Was the report written in a brief, concise style, in a way that a non-data scientist manager could appreciate?
