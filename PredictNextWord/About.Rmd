@@ -1,0 +1,18 @@
+---
+title: "About"
+author: "leosum"
+date: "December 23, 2016"
+output: html_document
+---
+
+This Shiny App is to predict the next word of your text. It is using a sample of the English language blog, twitter, and news data sets. The <code>tm</code> package is used to clean the data and create a corpus. Several n-gram are created from it and transform into **data.table** , on which we usea customized back-off algorithm. 
+
+To use the App, go on the Prediction tab, use the slider to predict the number of next word you would like to see. Then type in any text and hit the <b>Predict</b> button, or simply press Enter.
+
+The App will display the predicted world(s) for you and create an image of the result(s).
+
+The code is located at <https://github.com/leosum1/Capstone-DataScience>.
+
+Possible future evolution:
+- Analysis of the sentiment in the text before running the prediction
+- More computing power to create larger and more accurate dataset

@@ -1,0 +1,344 @@
+---
+title: "Capstone Milestone"
+author: "leosum"
+date: "November 27, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+The goal of this report is to display that I've gotten used to working with the data and that I am on track to create my prediction algorithm for the Coursera Data Science John Hopkins University Capstone.
+
+The report explains my exploratory analysis,  the major features of the data I have identified and briefly summarize my plans for creating the prediction algorithm and Shiny app. 
+
+## Get and Load data
+
+Load useful packages:
+```{r message=FALSE, warning=FALSE}
+library("tm")
+library("data.table")
+library("RCurl")
+library("SnowballC")
+library("stringi")
+library("wordcloud")
+library("ggplot2")
+library("RWeka")
+library("RColorBrewer")
+library("Matrix")
+```
+
+```{r , echo=FALSE}
+setwd(".")
+unzipped_dir <- "../Coursera-SwiftKey/final/en_US/"
+unzipped_twitter_file <- paste(unzipped_dir, "en_US.twitter.txt", sep = "")
+unzipped_news_file <- paste(unzipped_dir, "en_US.news.txt", sep = "")
+unzipped_blogs_file <- paste(unzipped_dir, "en_US.blogs.txt", sep = "")
+```
+
+Get the data and a bad word list:
+```{r , warning=FALSE}
+if (!file.exists(unzipped_blogs_file) |
+    !file.exists(unzipped_twitter_file) |
+    !file.exists(unzipped_news_file)) 
+  {
+   zipfile <- "../Coursera-SwiftKey.zip"
+   if (!file.exists(zipfile)) {
+      url <- download.file("http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip", 
+             destfile = zipfile, mode = "wb")
+    }
+   unzip(zipfile, exdir = "../Coursera-SwiftKey")
+  }
+```
+
+```{r , echo=FALSE, , warning=FALSE}
+rm(zipfile)
+p_dir <- file.path("..","Coursera-SWiftkey", "final", "en_US")
+p_twitter <- file.path("..","Coursera-SWiftkey", "final", "en_US", "en_US.twitter.txt")
+p_news <- file.path("..","Coursera-SWiftkey", "final", "en_US", "en_US.news.txt")
+p_blogs <- file.path("..","Coursera-SWiftkey", "final", "en_US", "en_US.blogs.txt")
+badwords <- "data/badwords.txt"
+con_twitter <- file(p_twitter, open = "rb")
+con_news <- file(p_news, open = "rb")
+con_blogs <- file(p_blogs, open = "rb")
+rm(unzipped_dir, unzipped_twitter_file, unzipped_blogs_file, unzipped_news_file) 
+```
+
+```{r }
+if (!file.exists(badwords)) {
+  url <- "https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"
+  bad_word <- getURL(url)
+  bad_word <- readLines(textConnection(bad_word))
+  writeLines(bad_word, "data/badwords.txt")
+}
+```
+
+## Basic report of summary statistics about the data sets
+
+The twitter file is `r file.info(p_twitter)$size / 1024^2` MB 
+
+The news file is `r file.info(p_news)$size / 1024^2` MB
+
+The blogs file is `r file.info(p_news)$size / 1024^2` MB 
+
+We create and inspect our Corpus and notice as expected our 3 documents. For each document we can see the number of characters it contains:
+```{r }
+twitter <- readLines(con_twitter, warn = F)
+news <- readLines(con_news,encoding= "UTF-8", warn = F)
+blogs <- readLines(con_blogs,encoding= "UTF-8", warn = F)
+documents <- Corpus(DirSource(p_dir))
+inspect(documents)
+```
+
+```{r , echo=FALSE}
+close(con_twitter)
+close(con_news)
+close(con_blogs)
+```
+
+```{r , echo=FALSE}
+documentCount <- function(doc) {
+  c(length(doc), sum(stri_count(doc, regex='\\S+')), sum(nchar(doc)))
+}
+documentSummary <- function(docs) {
+  summaryTable <- data.frame()
+  rowNames <-c()
+  for (i in seq(docs)) {
+    summaryTable <- rbind(summaryTable, documentCount(docs[[i]]$content))
+    rowNames <- c(rowNames, docs[[i]]$meta$id)
+  }
+  row.names(summaryTable) <- rowNames
+  names(summaryTable) <- c("Lines", "Words", "Chars")
+  summaryTable
+}
+```
+
+The details into a table: 
+```{r }
+print(documentSummary(documents))
+```
+
+## Sampling data
+
+```{r , echo=FALSE}
+set.seed(100)
+getSampledData <- function(data, samplePercent){
+  sampleSize <- floor(length(data) * samplePercent / 100)
+  dataIndex <- sample(c(1:length(data)), size = sampleSize)
+  sampledData <- data[dataIndex]
+  sampledData
+}
+r_twitter <- getSampledData(twitter, 0.9)
+r_news <- getSampledData(news, 0.9)
+r_blogs <- getSampledData(blogs, 0.9)
+```
+
+Sampling the Corpus: 
+```{r }
+sampleRatio <- 0.1
+r_all <- documents
+for(i in seq(r_all)) {
+  r_all[[i]]$content <- sample(r_all[[i]]$content, length(r_all[[i]]$content) * sampleRatio )
+}
+inspect(r_all)
+```
+
+Now again with the inspection of the Corpus we can see we do get 10% of the characteres for each files. We will work from now on exclusively with this sample Corpus, a corpora grouping a sample of the three files. 
+```{r , echo=FALSE}
+rm(documents, sampleRatio)  
+getCorpus <- function(data){
+  corpus <- Corpus(VectorSource(data))
+  corpus
+}
+my_stop_words <- readLines(badwords)
+my_stop_words_text <- paste(my_stop_words, collapse=" ")
+```
+
+## Clean the corpus
+We proceed with cleaning the corpora from spurious characteres and words as follow:
+```{r }
+basecleanCorpus <- function(corpus){
+  corpus <- tm_map(corpus, removePunctuation)                # Remove punctuation
+  corpus <- tm_map(corpus, removeNumbers)                    # Removing numbers  
+  corpus <- tm_map(corpus, tolower)                          # Convert to Lower Case
+  corpus <- tm_map(corpus, removeWords, my_stop_words_text)  # Remove bad word
+  corpus <- tm_map(corpus, stripWhitespace)                  # Eliminating Extra Whitespace
+  corpus <- tm_map(corpus, PlainTextDocument)
+  corpus
+}
+cleanCorpus <- function(corpus){
+  corpus <- tm_map(corpus, removePunctuation)
+  corpus <- tm_map(corpus, removeNumbers)  
+  corpus <- tm_map(corpus, tolower) 
+  corpus <- tm_map(corpus, removeWords, my_stop_words_text)
+  corpus <- tm_map(corpus, removeWords, stopwords("english")) # Remove English stopwords
+  corpus <- tm_map(corpus, stemDocument)                      # Stemming
+  corpus <- tm_map(corpus, stripWhitespace) 
+  corpus <- tm_map(corpus, PlainTextDocument)
+  corpus
+}
+corpusAllClean <- cleanCorpus(r_all)
+```
+
+```{r  echo=FALSE}
+corpusTwitter <- getCorpus(r_twitter)
+corpusNews <- getCorpus(r_news)
+corpusBlogs <- getCorpus(r_blogs)
+basecorpusAllClean <- basecleanCorpus(r_all)
+basecorpusAllClean <- tm_map(basecorpusAllClean, removeWords, my_stop_words_text) 
+corpusAllClean <- tm_map(corpusAllClean, removeWords, my_stop_words_text) 
+inspect(corpusAllClean)
+```
+
+During the cleaning we realized that by stremming and removing the English stop words we get a very clean coropora as the most common words and word extensions are removed. On the other hand for our application those will be highly needed, more on this later. For the purpose of our exploration we will continue without the cleanest dataset.  
+```{r  echo=FALSE}
+rm(corpusTwitter, corpusNews, corpusBlogs)
+rm(r_twitter, r_news, r_blogs)
+rm(badwords, my_stop_words, my_stop_words_text)
+rm(p_dir, p_twitter, p_news, p_blogs)
+rm(r_all)
+```
+
+## Exploratory
+
+We create a document term matrix and get a glance of the most frequent words in the corpora via a cloud image:
+```{r }
+dtm_all <- DocumentTermMatrix(corpusAllClean)
+#dtm_all_base <- DocumentTermMatrix(basecorpusAllClean)
+frequencyWords <- sort(colSums(as.matrix(dtm_all)), decreasing=TRUE) 
+set.seed(100)   
+wordcloud(names(frequencyWords), frequencyWords, max.words=50, rot.per=0.2, colors=brewer.pal(8, "Dark2")) 
+```
+
+Let's plot the 10 most frequent words in the corpora:
+```{r }
+top10 <- head(frequencyWords, 10)
+top10Words <- data.frame(word=names(top10), freq=top10) 
+ggplot(top10Words, aes(word, freq)) + geom_bar(stat="identity",fill="#bafa00") + ggtitle("Top 10 word frequency") + xlab("Word") + ylab("Fequency") + labs(colour = "Cylinders") 
+```
+
+Findings: It is nice to see that in the top 10 words we have: love, good, day, get, like... positive words.
+```{r  echo=FALSE}
+rm(top10Words, top10, frequencyWords)
+```
+
+## NGrams Token
+```{r  echo=FALSE}
+rm(top10Words, top10, frequencyWords)
+createDTM <- function(corpus, gram){
+  dtm <- DocumentTermMatrix(corpus, control = list(tokenize = gram))
+}
+OneGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1))
+BiGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+TriGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+```
+
+We create three dimension tokens 1-gram, 2-gram and 3-gram and get from each the most frequent combinaison: 
+```{r }
+dtmAll1g <- createDTM(corpusAllClean, OneGramTokenizer)
+dtmAll2g <- createDTM(corpusAllClean, BiGramTokenizer)
+dtmAll3g <- createDTM(corpusAllClean, TriGramTokenizer)
+```
+
+```{r echo=FALSE}
+getFreqTerms <- function(dtm, frequency){
+  freqTerms <- findFreqTerms(dtm, frequency)
+  freq <- colSums(as.matrix(dtm[, freqTerms]))
+  df <- data.frame(word=names(freq), freq=freq)
+  dfOrder <- df[order(df$freq, decreasing = TRUE), ]
+  dfOrder
+}
+```
+
+```{r }
+freqAll1g <- getFreqTerms(dtmAll1g, 500)
+freqAll2g <- getFreqTerms(dtmAll2g, 250)
+freqAll3g <- getFreqTerms(dtmAll3g, 50)
+```
+
+```{r echo=FALSE}
+rm(dtmAll1g, dtmAll2g, dtmAll3g)
+plotFreqTerms <- function(wfOrder, numberTerms){
+  p <- ggplot(wfOrder[1:numberTerms, ], aes(word, freq, fill=freq))
+  p <- p + geom_bar(stat='identity')
+  p <- p + theme(axis.text.x=element_text(angle=45, hjust=1))
+  p
+}
+```
+
+We plot for each token n-gram the top 20 best frequent combinaison:
+```{r }
+plotFreqTerms(freqAll1g, 20)
+plotFreqTerms(freqAll2g, 20)
+plotFreqTerms(freqAll3g, 20)
+```
+
+## Coverage
+```{r echo=FALSE}
+rm(freqAll1g, freqAll2g, freqAll3g)
+
+x <- sparseMatrix(i=dtm_all$i, j=dtm_all$j, x=dtm_all$v)
+dtm_frame <- data.frame(Terms = dtm_all$dimnames$Terms, Blogs = x[, 1], News = x[, 2], Twitter = x[, 3])
+dtm_frame$Total <- dtm_frame$Blogs + dtm_frame$News + dtm_frame$Twitter
+dtm_frame <- dtm_frame[order(dtm_frame$Total, decreasing = T),]
+rm(dtm_all, x)
+
+getCoverage <- function (dtm, coverage)
+{
+  frequency <- 0
+  requiredFrequency <- coverage * sum(dtm$Total)
+  # it is assumed that tdm is already sorted by decreasing order
+  for (i in 1:nrow(dtm))
+  {
+    if (frequency >= requiredFrequency)
+    {
+      return (i)
+    }
+    frequency <- frequency + dtm[i, "Total"]
+  }
+  
+  # this could happen only due to a bug in the code above
+  # in all normal cases this line should never being executed
+  return (nrow(tdm))
+}
+
+gc()
+
+```
+
+Get the coverage if we only get 50% or 90% of words of the copora:
+```{r }
+getCoverage(dtm_frame, 0.5)
+getCoverage(dtm_frame, 0.9)
+```
+
+Let's plot from 1 to 100%:
+
+
+```{r echo=FALSE}
+x <- seq(0.1, 0.9, by = 0.1)
+y <- c()
+for(i in x)
+{
+  y[i*10] <- getCoverage(dtm_frame, i)
+}
+
+qplot(x, y, geom = c("line"), xlab="Coverage", ylab="Number of words", main="Number of words required to cover language")
+rm(x, y, i)
+```
+
+## Plan the future App
+
+I'm not very surprised with any findings so far. The result of the exploratory analysis shows that most of the words are stop-words and for the best coverage we want to include them in our prediction. 
+
+To predict words I am planning to use a straightforward approach: get the whole dataset, preprocess it and build different 1 to 4 gram matrices while predicting the next word with analyzing frequencies starting from the 4th gram (using 3 last words user typed). If nothing is found, use the next 3 gram (using 2 last words user typed), then 2 gram (using only last word user typed). I will also aside the n-grams work on word correlation to include in the next word prediction.
+
+If nothing is found I will probably not recommend to the user anything. 
+
+If I encounter memory issues, I will try to reduct number of rows in each ngram to cover as much combinations as possible with less amount of memory. I will also give a prefered choice to the user with positive words.
+
+
+That conlude this milestone report. Thank you!
