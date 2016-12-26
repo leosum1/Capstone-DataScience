@@ -18,14 +18,14 @@ This repository contains the following files and folders:
 3. Task2.R: Exploratory Data Analysis
 4. Task3.R: Modeling
 4. Task4.R: Prediction
-5. Task5.R:
+5. Task5.R: Enhancement and Performance
 6. Data directory
 7. Milestone.Rmd: Report also available at http://rpubs.com/leosum1/231042
 8. PredictNextWord directory: 
 A Shiny App https://leosum.shinyapps.io/PredictNextWord/ and a presentation http://rpubs.com/leosum1/PredictNextWord
 
 
-## Loading and cleaning the data [Task0/Task1]
+## Loading and Cleaning the data [Task0/Task1]
 Task0:
 - Obtaining the data: In order to process the data in R (http://www.r-project.org/), we first needed to load the necessary packages. Then we downloaded the source data from http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. For this project, we only used the English (United States) data even though other language files were available, including German, Finnish, and Russian. The English data was derived from three Internet sources: blogs, twitters, and news files.
 
