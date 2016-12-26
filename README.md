@@ -1,4 +1,4 @@
-The Coursera Data Science Specialization Capstone project from Johns Hopkins University (JHU) allows students to create a usable public data product that can show their skills to potential employers. Projects are drawn from real-world problems and are conducted with industry, government, and academic partners. For this capstone, JHU is partnering with SwiftKey (http://swiftkey.com/en/) to apply data science in the area of natural language processing (NLP).
+ne The Coursera Data Science Specialization Capstone project from Johns Hopkins University (JHU) allows students to create a usable public data product that can show their skills to potential employers. Projects are drawn from real-world problems and are conducted with industry, government, and academic partners. For this capstone, JHU is partnering with SwiftKey (http://swiftkey.com/en/) to apply data science in the area of natural language processing (NLP).
 
 The objective of this project is to build a working predictive text model. The data we will be using is from a corpus called HC Corpora (www.corpora.heliohost.org). A corpus is body of text, usually containing a large number of sentences. 
 [1] The readme file at http://www.corpora.heliohost.org/aboutcorpus.html contains the details on the available corpora.
@@ -8,7 +8,7 @@ We first need to familiarize with Natural Language Processing, Text Mining, and 
 https://en.wikipedia.org/wiki/Natural_language_processing
 
 https://www.jstatsoft.org/article/view/v025i05
-
+o
 https://cran.r-project.org/web/views/NaturalLanguageProcessing.html
 
 This repository contains the following files and folders:
@@ -59,10 +59,10 @@ At this time in the project we report what have been done via a Milestone Rpub d
 
 ## Prediction Model [Task4/Task5]
 Task4:
-- Build the predictive model based on the previous data modeling steps Task3.
+- Build the predictive model based on the previous data modeling steps done in Task3.
 
 Task5:
-- Explore new models and data to improve the predictive model in Task4.
+- Explore new models and data to improve the predictive model, the ouput of Task4.
 - Use timing software to evaluate the computational complexity of the model. 
 - Evaluate the new prediction model on both accuracy and efficiency. 
 - Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.
