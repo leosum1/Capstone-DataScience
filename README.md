@@ -22,7 +22,7 @@ This repository contains the following files and folders:
 6. Data directory
 7. Milestone.Rmd: Report also available at http://rpubs.com/leosum1/231042
 8. PredictNextWord directory: 
-A Shiny App https://leosum.shinyapps.io/PredictNextWord/https://leosum.shinyapps.io/PredictNextWord/ and a presentation http://rpubs.com/leosum1/PredictNextWord
+A Shiny App https://leosum.shinyapps.io/PredictNextWord/ and a presentation http://rpubs.com/leosum1/PredictNextWord
 
 
 ## Loading and cleaning the data [Task0/Task1]
