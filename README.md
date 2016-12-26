@@ -17,14 +17,15 @@ This repository contains the following files and folders:
 2. Task1.R: Creates the data objects from cleaned source files.
 3. Task2.R: Exploratory Data Analysis
 4. Task3.R: Modeling
-5. data directory
+4. Task4.R: Prediction
+5. Task5.R:
+6. Data directory
+7. Milestone.Rmd: Report also available at http://rpubs.com/leosum1/231042
+8. PredictNextWord directory: Shiny App and Presentation https://leosum.shinyapps.io/PredictNextWord/ and http://rpubs.com/leosum1/PredictNextWord
 
-This Readme explains how we're loading, cleaning, tokenzising, removing profanity and sampling the data. 
-Next it explains our initial exploratory analysis and our goals for the eventual predictive text application and algorithm. 
-We also explains the major features of the data we have identified and briefly summarizes our plans for creating the prediction algorithm and a Shiny (http://shiny.rstudio.com/) application.
 
 ## Loading and cleaning the data [Task0/Task1]
-Task0
+Task0:
 - Obtaining the data: In order to process the data in R (http://www.r-project.org/), we first needed to load the necessary packages. Then we downloaded the source data from http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. For this project, we only used the English (United States) data even though other language files were available, including German, Finnish, and Russian. The English data was derived from three Internet sources: blogs, twitters, and news files.
 
 Task1:
@@ -45,25 +46,31 @@ Task1:
 - Profanity: We remove profanity and other words we do not want to predict.
 
 ## Exploratory Data Analysis and Modeling [Task2/Task3]
-Task2
+Task2:
 - Explore: We understand the distribution and relationship between the words, tokens, and phrases in the text. We perform a thorough exploratory analysis of the data, understanding the distribution of words and relationship between the words in the corpora. 
 Understand frequencies of words and word pairs - build figures and tables to understand variation in the frequencies of words and word pairs in the data.
 
-Some words are more frequent than others - what are the distributions of word frequencies? 
+Task3:
+- Build basic n-gram model using the exploratory analysis we just performed in Task2
+- Build a model to handle unseen n-grams as a combination of words that does not appear in the corpora.
 
-What are the frequencies of 2-grams and 3-grams in the dataset? 
+At this time in the project we report what have been done via a Milestone Rpub document. 
 
-How many unique words do you need in a frequency sorted dictionary to cover 50% of all word instances in the language? 90%? 
+## Prediction Model [Task4/Task5]
+Task4:
+- Build the predictive model based on the previous data modeling steps Task3.
 
-How do you evaluate how many of the words come from foreign languages? 
+Task5:
+- Explore new models and data to improve the predictive model in Task4.
+- Use timing software to evaluate the computational complexity of the model. 
+- Evaluate the new prediction model on both accuracy and efficiency. 
+- Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.
 
-Can you think of a way to increase the coverage -- identifying words that may not be in the corpora or using a smaller number of words in the dictionary to cover the same number of phrases? 
+## Data Product [Task6/Task7]
+This is the final step of the project and everything from now on will be in the PredictNextWord directory.
 
-## Rpub
-Does the link lead to an HTML page describing the exploratory analysis of the training data set?
+Task6:
+- Create a data product to show off the prediction algorithm via a Shiny app that accepts an n-gram and predicts the next word.
 
-Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
-
-Has the data scientist made basic plots, such as histograms to illustrate features of the data?
-
-Was the report written in a brief, concise style, in a way that a non-data scientist manager could appreciate?
+Task7:
+- A 5 slided deck promoting the product using RStudio Presenter
