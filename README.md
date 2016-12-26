@@ -21,7 +21,8 @@ This repository contains the following files and folders:
 5. Task5.R:
 6. Data directory
 7. Milestone.Rmd: Report also available at http://rpubs.com/leosum1/231042
-8. PredictNextWord directory: Shiny App and Presentation https://leosum.shinyapps.io/PredictNextWord/ and http://rpubs.com/leosum1/PredictNextWord
+8. PredictNextWord directory: 
+A Shiny App https://leosum.shinyapps.io/PredictNextWord/https://leosum.shinyapps.io/PredictNextWord/ and a presentation http://rpubs.com/leosum1/PredictNextWord
 
 
 ## Loading and cleaning the data [Task0/Task1]
@@ -67,7 +68,7 @@ Task5:
 - Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.
 
 ## Data Product [Task6/Task7]
-This is the final step of the project and everything from now on will be in the PredictNextWord directory.
+This is the final step of the project and everything from this point is located in the PredictNextWord directory.
 
 Task6:
 - Create a data product to show off the prediction algorithm via a Shiny app that accepts an n-gram and predicts the next word.
